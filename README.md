@@ -11,9 +11,9 @@ A beginner on github community
 - Know little
 
   - C/C++
-- Python
+  - Python
   - PHP
-- ASP
+  - ASP
   
 - Experienced **minecraft** player
 - A crazy fan of **OneRepublic**
