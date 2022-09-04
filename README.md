@@ -17,6 +17,6 @@ A beginner on github community
 
 - A crazy fan of **OneRepublic**
 
-- University student (studying in Software Engineering)
+- University student (Software Engineering)
 
 - Currently interested in Artificial Intelligence
