@@ -23,4 +23,4 @@ A beginner on github community
 
 - Player of YuanShen
 
-![yuan](https://raw.githubusercontent.com/QZero233/PictureBedDemo/main/QQ%E6%88%AA%E5%9B%BE20230417090645.png?token=AMIFIQBRBWA7B5A3Y4CCUW3EHSOWO)
+![yuan](https://raw.githubusercontent.com/QZero233/MyPictureBed/main/QQ%E6%88%AA%E5%9B%BE20230417090645.p797lyxffsi.png)
