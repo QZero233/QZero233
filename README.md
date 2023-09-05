@@ -21,6 +21,6 @@ A beginner on github community
 
 - Currently interested in Artificial Intelligence
 
-- Player of YuanShen
+- Player of Genshin Impact
 
 ![yuan](https://raw.githubusercontent.com/QZero233/MyPictureBed/main/QQ%E6%88%AA%E5%9B%BE20230417090645.p797lyxffsi.png)
