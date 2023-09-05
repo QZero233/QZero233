@@ -15,7 +15,7 @@ A beginner on github community
   
 - Experienced **minecraft** player
 
-- A crazy fan of **OneRepublic**
+- A crazy fan of **OneRepublic** and **YOASOBI**
 
 - University student (Software Engineering)
 
