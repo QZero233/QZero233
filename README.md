@@ -2,7 +2,9 @@
 
 # 👋 Hi there, I'm QZero233
 
-<img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=24&duration=3000&pause=1000&color=58A6FF&center=true&vCenter=true&width=435&lines=Graduate+Student+in+CS;AI+Agent+Developer;Open+Source+Enthusiast" alt="Typing SVG" />
+### 👨‍💻 About Me
+
+Graduate Student in CS · AI Agent Developer · Open Source Enthusiast
 
 ---
 
@@ -32,9 +34,9 @@
 
 ### 📊 GitHub Stats
 
-<img src="https://github-profile-trophy.vercel.app/?username=QZero233&theme=tokyonight&no-frame=true&no-bg=true&column=3" alt="GitHub Trophy" />
+<img src="https://github-readme-stats.vercel.app/api?username=QZero233&show_icons=true&theme=tokyonight&hide_border=true" alt="GitHub Stats" />
 
-<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=QZero233&layout=compact&theme=tokyonight&hide_border=true" alt="Top Languages" />
+<img src="https://github-readme-streak-stats.herokuapp.com/?user=QZero233&theme=tokyonight&hide_border=true" alt="GitHub Streak" />
 
 ---
 
