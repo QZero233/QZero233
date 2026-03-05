@@ -46,9 +46,9 @@ Graduate Student in CS · AI Agent Developer · 9 Years Java/Kotlin Experience
 
 ### 📊 GitHub Stats
 
-<img src="https://github-readme-stats.vercel.app/api?username=QZero233&show_icons=true&theme=tokyonight&hide_border=true" alt="GitHub Stats" />
+<img src="https://github-profile-trophy.vercel.app/?username=QZero233&theme=tokyonight&no-frame=true&no-bg=true&column=7" alt="GitHub Trophy" />
 
-<img src="https://github-readme-streak-stats.herokuapp.com/?user=QZero233&theme=tokyonight&hide_border=true" alt="GitHub Streak" />
+<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=QZero233&layout=compact&theme=tokyonight&hide_border=true" alt="Top Languages" />
 
 ---
 
