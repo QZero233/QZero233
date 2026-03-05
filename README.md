@@ -4,7 +4,7 @@
 
 ### 👨‍💻 About Me
 
-Graduate Student in CS · AI Agent Developer · Open Source Enthusiast
+Graduate Student in CS · AI Agent Developer · 9 Years Java/Kotlin Experience
 
 ---
 
@@ -30,6 +30,18 @@ Graduate Student in CS · AI Agent Developer · Open Source Enthusiast
 <img src="https://img.shields.io/badge/ArkTS-0078D4?style=for-the-badge&logo=ark&logoColor=white" alt="ArkTS" />
 <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript" />
 
+**Frameworks & Tools**
+
+<img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white" alt="SpringBoot" />
+<img src="https://img.shields.io/badge/Vue.js-4FC08D?style=for-the-badge&logo=vue.js&logoColor=white" alt="Vue.js" />
+<img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" />
+
+**AI Partners**
+
+<img src="https://img.shields.io/badge/GitHub_Copilot-000000?style=for-the-badge&logo=githubcopilot&logoColor=white" alt="Copilot" />
+<img src="https://img.shields.io/badge/OpenAI_Codex-412991?style=for-the-badge&logo=openai&logoColor=white" alt="Codex" />
+<img src="https://img.shields.io/badge/Claude_Code-CC785C?style=for-the-badge&logo=anthropic&logoColor=white" alt="Claude Code" />
+
 ---
 
 ### 📊 GitHub Stats
@@ -45,7 +57,7 @@ Graduate Student in CS · AI Agent Developer · Open Source Enthusiast
 <table>
   <tr>
     <td align="center">🎮</td>
-    <td>Minecraft & Genshin Impact Player</td>
+    <td>Minecraft · Genshin Impact · CS2 · LOL · Honkai Star Rail · Honkai 3</td>
   </tr>
   <tr>
     <td align="center">🎵</td>
