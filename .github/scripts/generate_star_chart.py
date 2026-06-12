@@ -3,6 +3,7 @@ import datetime as dt
 import json
 import os
 import sys
+import urllib.error
 import urllib.request
 from collections import Counter
 
@@ -65,10 +66,17 @@ def fetch_public_repos(owner: str):
         rows = fetch_paginated(user_url, accept=accept)
         if rows:
             return [row.get("name") for row in rows if row.get("name")]
-    except Exception:
-        pass
-    rows = fetch_paginated(org_url, accept=accept)
-    return [row.get("name") for row in rows if row.get("name")]
+    except urllib.error.HTTPError as exc:
+        if exc.code != 404:
+            print(f"Warning: failed to list user repos for {owner}: {exc}", file=sys.stderr)
+    except Exception as exc:
+        print(f"Warning: failed to list user repos for {owner}: {exc}", file=sys.stderr)
+    try:
+        rows = fetch_paginated(org_url, accept=accept)
+        return [row.get("name") for row in rows if row.get("name")]
+    except Exception as exc:
+        print(f"Warning: failed to list org repos for {owner}: {exc}", file=sys.stderr)
+        return []
 
 
 def fetch_repo_star_dates(owner: str, repo: str):
