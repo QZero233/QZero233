@@ -117,7 +117,7 @@ def fetch_star_dates(owner: str):
 
 def build_series(star_dates, start_date: dt.date):
     today = dt.date.today()
-    start = min(start_date, today)
+    start = start_date
     by_day = Counter(star_dates)
 
     before = sum(1 for d in star_dates if d < start)
@@ -206,6 +206,12 @@ def render_svg(x_dates, y_values):
 def main():
     owner = OWNER
     start_date = dt.date.fromisoformat(START_DATE_STR)
+    if start_date > dt.date.today():
+        print(
+            f"Warning: STAR_CHART_START_DATE {start_date.isoformat()} is in the future, using today instead.",
+            file=sys.stderr,
+        )
+        start_date = dt.date.today()
     try:
         star_dates = fetch_star_dates(owner)
     except Exception as exc:
