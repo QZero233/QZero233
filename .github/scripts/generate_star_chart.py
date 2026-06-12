@@ -11,9 +11,10 @@ OWNER = os.getenv("REPO_OWNER", "QZero233")
 REPO = os.getenv("REPO_NAME", "QZero233")
 DAYS = int(os.getenv("STAR_CHART_DAYS", "365"))
 OUTPUT = os.getenv("STAR_CHART_OUTPUT", "assets/star-history.svg")
+STARGAZERS_ACCEPT = "application/vnd.github.v3.star+json"
 
 
-def github_request(url: str, accept: str = "application/vnd.github.star+json"):
+def github_request(url: str, accept: str = STARGAZERS_ACCEPT):
     """Request GitHub API data using GH_TOKEN first, then GITHUB_TOKEN as fallback."""
     token = os.getenv("GH_TOKEN") or os.getenv("GITHUB_TOKEN")
     headers = {
@@ -84,7 +85,9 @@ def fetch_repo_star_dates(owner: str, repo: str):
     url = f"https://api.github.com/repos/{owner}/{repo}/stargazers?per_page={per_page}&page=1"
     dates = []
     while url:
-        rows, link = github_request(url)
+        rows, link = github_request(url, accept=STARGAZERS_ACCEPT)
+        if not isinstance(rows, list):
+            raise RuntimeError(f"unexpected stargazers response type for {owner}/{repo}")
         for row in rows:
             starred_at = row.get("starred_at")
             if starred_at:
@@ -96,8 +99,17 @@ def fetch_repo_star_dates(owner: str, repo: str):
 def fetch_star_dates(owner: str):
     repos = fetch_public_repos(owner)
     dates = []
+    repos_with_star_dates = 0
     for repo in repos:
-        dates.extend(fetch_repo_star_dates(owner, repo))
+        repo_dates = fetch_repo_star_dates(owner, repo)
+        if repo_dates:
+            repos_with_star_dates += 1
+        dates.extend(repo_dates)
+    print(
+        f"Fetched {len(dates)} stargazer events from {len(repos)} public repos "
+        f"({repos_with_star_dates} repos with timestamped stars)",
+        file=sys.stderr,
+    )
     return sorted(dates)
 
 
