@@ -9,7 +9,7 @@ from collections import Counter
 
 OWNER = os.getenv("REPO_OWNER", "QZero233")
 REPO = os.getenv("REPO_NAME", "QZero233")
-DAYS = int(os.getenv("STAR_CHART_DAYS", "365"))
+START_DATE_STR = os.getenv("STAR_CHART_START_DATE", "2025-01-01")
 OUTPUT = os.getenv("STAR_CHART_OUTPUT", "assets/star-history.svg")
 STARGAZERS_ACCEPT = "application/vnd.github.v3.star+json"
 
@@ -115,9 +115,9 @@ def fetch_star_dates(owner: str):
     return sorted(dates)
 
 
-def build_series(star_dates, days):
+def build_series(star_dates, start_date: dt.date):
     today = dt.date.today()
-    start = today - dt.timedelta(days=days - 1)
+    start = min(start_date, today)
     by_day = Counter(star_dates)
 
     before = sum(1 for d in star_dates if d < start)
@@ -143,9 +143,9 @@ def esc(text: str):
     )
 
 
-def render_svg(x_dates, y_values, owner):
+def render_svg(x_dates, y_values):
     width, height = 980, 360
-    pad_l, pad_r, pad_t, pad_b = 64, 24, 48, 56
+    pad_l, pad_r, pad_t, pad_b = 64, 24, 36, 56
     plot_w = width - pad_l - pad_r
     plot_h = height - pad_t - pad_b
 
@@ -178,14 +178,11 @@ def render_svg(x_dates, y_values, owner):
     x_tick_count = 6
     x_tick_idx = sorted(set(round((len(x_dates) - 1) * i / x_tick_count) for i in range(x_tick_count + 1)))
 
-    title = f"{owner} Public Repos Star History (Last {len(x_dates)} Days)"
-
     lines = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
-        '<defs><style><![CDATA[text{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;fill:#8b949e} .title{font-size:20px;fill:#c9d1d9;font-weight:600} .axis{font-size:12px} .value{font-size:12px}]]></style></defs>',
+        '<defs><style><![CDATA[text{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;fill:#8b949e} .axis{font-size:12px} .value{font-size:12px}]]></style></defs>',
         '<rect width="100%" height="100%" fill="#0d1117"/>',
-        f'<text x="{pad_l}" y="30" class="title">{esc(title)}</text>',
-        f'<text x="{width - pad_r}" y="30" text-anchor="end" class="value">Updated: {esc(dt.date.today().isoformat())}</text>',
+        f'<text x="{width - pad_r}" y="24" text-anchor="end" class="value">Updated: {esc(dt.date.today().isoformat())}</text>',
     ]
 
     for tv in tick_vals:
@@ -208,13 +205,14 @@ def render_svg(x_dates, y_values, owner):
 
 def main():
     owner = OWNER
+    start_date = dt.date.fromisoformat(START_DATE_STR)
     try:
         star_dates = fetch_star_dates(owner)
     except Exception as exc:
         print(f"Warning: failed to fetch stargazer history: {exc}", file=sys.stderr)
         star_dates = []
-    x_dates, y_values = build_series(star_dates, DAYS)
-    svg = render_svg(x_dates, y_values, owner)
+    x_dates, y_values = build_series(star_dates, start_date)
+    svg = render_svg(x_dates, y_values)
 
     out_path = OUTPUT
     out_dir = os.path.dirname(out_path)
