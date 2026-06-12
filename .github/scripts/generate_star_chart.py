@@ -3,6 +3,7 @@ import datetime as dt
 import json
 import os
 import sys
+import urllib.error
 import urllib.request
 from collections import Counter
 
@@ -10,13 +11,14 @@ OWNER = os.getenv("REPO_OWNER", "QZero233")
 REPO = os.getenv("REPO_NAME", "QZero233")
 DAYS = int(os.getenv("STAR_CHART_DAYS", "365"))
 OUTPUT = os.getenv("STAR_CHART_OUTPUT", "assets/star-history.svg")
+STARGAZERS_ACCEPT = "application/vnd.github.v3.star+json"
 
 
-def github_request(url: str):
+def github_request(url: str, accept: str = STARGAZERS_ACCEPT):
     """Request GitHub API data using GH_TOKEN first, then GITHUB_TOKEN as fallback."""
     token = os.getenv("GH_TOKEN") or os.getenv("GITHUB_TOKEN")
     headers = {
-        "Accept": "application/vnd.github.star+json",
+        "Accept": accept,
         "X-GitHub-Api-Version": "2022-11-28",
         "User-Agent": f"{OWNER}-{REPO}-star-chart-action",
     }
@@ -45,17 +47,71 @@ def parse_next_link(link_header: str):
     return None
 
 
-def fetch_star_dates(owner: str, repo: str):
+def fetch_paginated(url: str, accept: str):
+    rows = []
+    while url:
+        data, link = github_request(url, accept=accept)
+        if not isinstance(data, list):
+            break
+        rows.extend(data)
+        url = parse_next_link(link)
+    return rows
+
+
+def fetch_public_repos(owner: str):
+    per_page = 100
+    user_url = f"https://api.github.com/users/{owner}/repos?type=public&per_page={per_page}&page=1"
+    org_url = f"https://api.github.com/orgs/{owner}/repos?type=public&per_page={per_page}&page=1"
+    accept = "application/vnd.github+json"
+    try:
+        rows = fetch_paginated(user_url, accept=accept)
+        if rows:
+            return [row.get("name") for row in rows if row.get("name")]
+    except urllib.error.HTTPError as exc:
+        if exc.code != 404:
+            print(f"Warning: failed to list user repos for {owner}: {exc}", file=sys.stderr)
+    except Exception as exc:
+        print(f"Warning: failed to list user repos for {owner}: {exc}", file=sys.stderr)
+    try:
+        rows = fetch_paginated(org_url, accept=accept)
+        return [row.get("name") for row in rows if row.get("name")]
+    except Exception as exc:
+        print(f"Warning: failed to list org repos for {owner}: {exc}", file=sys.stderr)
+        return []
+
+
+def fetch_repo_star_dates(owner: str, repo: str):
     per_page = 100
     url = f"https://api.github.com/repos/{owner}/{repo}/stargazers?per_page={per_page}&page=1"
     dates = []
     while url:
-        rows, link = github_request(url)
+        rows, link = github_request(url, accept=STARGAZERS_ACCEPT)
+        if not isinstance(rows, list):
+            raise RuntimeError(
+                f"unexpected stargazers response type for {owner}/{repo}: {type(rows).__name__}"
+            )
         for row in rows:
             starred_at = row.get("starred_at")
             if starred_at:
                 dates.append(dt.datetime.fromisoformat(starred_at.replace("Z", "+00:00")).date())
         url = parse_next_link(link)
+    return sorted(dates)
+
+
+def fetch_star_dates(owner: str):
+    repos = fetch_public_repos(owner)
+    dates = []
+    repos_with_star_dates = 0
+    for repo in repos:
+        repo_dates = fetch_repo_star_dates(owner, repo)
+        if repo_dates:
+            repos_with_star_dates += 1
+        dates.extend(repo_dates)
+    print(
+        f"Fetched {len(dates)} stargazer events from {len(repos)} public repos "
+        f"({repos_with_star_dates} repos with timestamped stars)",
+        file=sys.stderr,
+    )
     return sorted(dates)
 
 
@@ -87,7 +143,7 @@ def esc(text: str):
     )
 
 
-def render_svg(x_dates, y_values, owner, repo):
+def render_svg(x_dates, y_values, owner):
     width, height = 980, 360
     pad_l, pad_r, pad_t, pad_b = 64, 24, 48, 56
     plot_w = width - pad_l - pad_r
@@ -122,7 +178,7 @@ def render_svg(x_dates, y_values, owner, repo):
     x_tick_count = 6
     x_tick_idx = sorted(set(round((len(x_dates) - 1) * i / x_tick_count) for i in range(x_tick_count + 1)))
 
-    title = f"{owner}/{repo} Star History (Last {len(x_dates)} Days)"
+    title = f"{owner} Public Repos Star History (Last {len(x_dates)} Days)"
 
     lines = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
@@ -152,15 +208,13 @@ def render_svg(x_dates, y_values, owner, repo):
 
 def main():
     owner = OWNER
-    repo = REPO
-
     try:
-        star_dates = fetch_star_dates(owner, repo)
+        star_dates = fetch_star_dates(owner)
     except Exception as exc:
         print(f"Warning: failed to fetch stargazer history: {exc}", file=sys.stderr)
         star_dates = []
     x_dates, y_values = build_series(star_dates, DAYS)
-    svg = render_svg(x_dates, y_values, owner, repo)
+    svg = render_svg(x_dates, y_values, owner)
 
     out_path = OUTPUT
     out_dir = os.path.dirname(out_path)
