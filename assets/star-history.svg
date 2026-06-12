@@ -6,13 +6,13 @@
 <line x1="64" y1="304.00" x2="956" y2="304.00" stroke="#30363d" stroke-width="1"/>
 <text x="56" y="308.00" text-anchor="end" class="axis">0</text>
 <line x1="64" y1="252.80" x2="956" y2="252.80" stroke="#30363d" stroke-width="1"/>
-<text x="56" y="256.80" text-anchor="end" class="axis">0</text>
+<text x="56" y="256.80" text-anchor="end" class="axis">0.2</text>
 <line x1="64" y1="201.60" x2="956" y2="201.60" stroke="#30363d" stroke-width="1"/>
-<text x="56" y="205.60" text-anchor="end" class="axis">0</text>
+<text x="56" y="205.60" text-anchor="end" class="axis">0.4</text>
 <line x1="64" y1="150.40" x2="956" y2="150.40" stroke="#30363d" stroke-width="1"/>
-<text x="56" y="154.40" text-anchor="end" class="axis">1</text>
+<text x="56" y="154.40" text-anchor="end" class="axis">0.6</text>
 <line x1="64" y1="99.20" x2="956" y2="99.20" stroke="#30363d" stroke-width="1"/>
-<text x="56" y="103.20" text-anchor="end" class="axis">1</text>
+<text x="56" y="103.20" text-anchor="end" class="axis">0.8</text>
 <line x1="64" y1="48.00" x2="956" y2="48.00" stroke="#30363d" stroke-width="1"/>
 <text x="56" y="52.00" text-anchor="end" class="axis">1</text>
 <line x1="64.00" y1="48" x2="64.00" y2="304" stroke="#21262d" stroke-width="1"/>

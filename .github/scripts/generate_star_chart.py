@@ -113,6 +113,11 @@ def render_svg(x_dates, y_values, owner, repo):
     y_ticks = 5
     tick_vals = [min_y + (max_y - min_y) * i / y_ticks for i in range(y_ticks + 1)]
 
+    def format_tick(v: float) -> str:
+        if abs(v - round(v)) < 1e-9:
+            return str(int(round(v)))
+        return f"{v:.1f}"
+
     x_tick_count = 6
     x_tick_idx = sorted(set(round((len(x_dates) - 1) * i / x_tick_count) for i in range(x_tick_count + 1)))
 
@@ -129,7 +134,7 @@ def render_svg(x_dates, y_values, owner, repo):
     for tv in tick_vals:
         y = py(tv)
         lines.append(f'<line x1="{pad_l}" y1="{y:.2f}" x2="{width-pad_r}" y2="{y:.2f}" stroke="#30363d" stroke-width="1"/>')
-        lines.append(f'<text x="{pad_l-8}" y="{y+4:.2f}" text-anchor="end" class="axis">{int(round(tv))}</text>')
+        lines.append(f'<text x="{pad_l-8}" y="{y+4:.2f}" text-anchor="end" class="axis">{format_tick(tv)}</text>')
 
     for idx in x_tick_idx:
         x = px(idx)
@@ -157,7 +162,9 @@ def main():
     svg = render_svg(x_dates, y_values, owner, repo)
 
     out_path = OUTPUT
-    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    out_dir = os.path.dirname(out_path)
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(svg)
 
