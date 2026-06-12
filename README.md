@@ -48,6 +48,10 @@ Graduate Student in CS · AI Agent Developer · 9 Years Java/Kotlin Experience
 
 <img src="https://github-readme-streak-stats.herokuapp.com/?user=QZero233&theme=tokyonight&hide_border=true" alt="GitHub Streak" />
 
+### ⭐ Star Trend
+
+<img src="./assets/star-history.svg" alt="Repository Star Trend" />
+
 ---
 
 ### 🎯 Beyond Code
