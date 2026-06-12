@@ -87,7 +87,9 @@ def fetch_repo_star_dates(owner: str, repo: str):
     while url:
         rows, link = github_request(url, accept=STARGAZERS_ACCEPT)
         if not isinstance(rows, list):
-            raise RuntimeError(f"unexpected stargazers response type for {owner}/{repo}")
+            raise RuntimeError(
+                f"unexpected stargazers response type for {owner}/{repo}: {type(rows).__name__}"
+            )
         for row in rows:
             starred_at = row.get("starred_at")
             if starred_at:
