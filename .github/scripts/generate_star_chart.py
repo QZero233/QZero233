@@ -13,6 +13,7 @@ OUTPUT = os.getenv("STAR_CHART_OUTPUT", "assets/star-history.svg")
 
 
 def github_request(url: str):
+    """Request GitHub API data using GH_TOKEN first, then GITHUB_TOKEN as fallback."""
     token = os.getenv("GH_TOKEN") or os.getenv("GITHUB_TOKEN")
     headers = {
         "Accept": "application/vnd.github.star+json",

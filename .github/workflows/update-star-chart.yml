@@ -25,7 +25,7 @@ jobs:
 
       - name: Commit and push if changed
         run: |
-          if git diff --quiet; then
+          if git diff --quiet && [ -z "$(git ls-files --others --exclude-standard assets/star-history.svg)" ]; then
             echo "No changes"
             exit 0
           fi
