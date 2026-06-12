@@ -2,6 +2,7 @@
 import datetime as dt
 import json
 import os
+import sys
 import urllib.request
 from collections import Counter
 
@@ -12,12 +13,17 @@ OUTPUT = os.getenv("STAR_CHART_OUTPUT", "assets/star-history.svg")
 
 
 def github_request(url: str):
+    token = os.getenv("GH_TOKEN") or os.getenv("GITHUB_TOKEN")
+    headers = {
+        "Accept": "application/vnd.github.star+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+        "User-Agent": f"{OWNER}-{REPO}-star-chart-action",
+    }
+    if token:
+        headers["Authorization"] = "Bearer " + token
     req = urllib.request.Request(
         url,
-        headers={
-            "Accept": "application/vnd.github.star+json",
-            "X-GitHub-Api-Version": "2022-11-28",
-        },
+        headers=headers,
     )
     with urllib.request.urlopen(req, timeout=30) as resp:
         link = resp.headers.get("Link", "")
@@ -142,7 +148,11 @@ def main():
     owner = OWNER
     repo = REPO
 
-    star_dates = fetch_star_dates(owner, repo)
+    try:
+        star_dates = fetch_star_dates(owner, repo)
+    except Exception as exc:
+        print(f"Warning: failed to fetch stargazer history: {exc}", file=sys.stderr)
+        star_dates = []
     x_dates, y_values = build_series(star_dates, DAYS)
     svg = render_svg(x_dates, y_values, owner, repo)
 
