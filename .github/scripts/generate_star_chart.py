@@ -11,10 +11,13 @@ OWNER = os.getenv("REPO_OWNER", "QZero233")
 REPO = os.getenv("REPO_NAME", "QZero233")
 START_DATE_STR = os.getenv("STAR_CHART_START_DATE", "2025-01-01")
 OUTPUT = os.getenv("STAR_CHART_OUTPUT", "assets/star-history.svg")
-STARGAZERS_ACCEPT = "application/vnd.github.v3.star+json"
+STARGAZERS_ACCEPTS = (
+    "application/vnd.github.star+json",
+    "application/vnd.github.v3.star+json",
+)
 
 
-def github_request(url: str, accept: str = STARGAZERS_ACCEPT):
+def github_request(url: str, accept: str = STARGAZERS_ACCEPTS[0]):
     """Request GitHub API data using GH_TOKEN first, then GITHUB_TOKEN as fallback."""
     token = os.getenv("GH_TOKEN") or os.getenv("GITHUB_TOKEN")
     headers = {
@@ -82,20 +85,29 @@ def fetch_public_repos(owner: str):
 
 def fetch_repo_star_dates(owner: str, repo: str):
     per_page = 100
-    url = f"https://api.github.com/repos/{owner}/{repo}/stargazers?per_page={per_page}&page=1"
-    dates = []
-    while url:
-        rows, link = github_request(url, accept=STARGAZERS_ACCEPT)
-        if not isinstance(rows, list):
-            raise RuntimeError(
-                f"unexpected stargazers response type for {owner}/{repo}: {type(rows).__name__}"
-            )
-        for row in rows:
-            starred_at = row.get("starred_at")
-            if starred_at:
-                dates.append(dt.datetime.fromisoformat(starred_at.replace("Z", "+00:00")).date())
-        url = parse_next_link(link)
-    return sorted(dates)
+    initial_url = f"https://api.github.com/repos/{owner}/{repo}/stargazers?per_page={per_page}&page=1"
+    for accept in STARGAZERS_ACCEPTS:
+        url = initial_url
+        dates = []
+        saw_rows = False
+        saw_starred_at = False
+        while url:
+            rows, link = github_request(url, accept=accept)
+            if not isinstance(rows, list):
+                raise RuntimeError(
+                    f"unexpected stargazers response type for {owner}/{repo}: {type(rows).__name__}"
+                )
+            if rows:
+                saw_rows = True
+            for row in rows:
+                starred_at = row.get("starred_at")
+                if starred_at:
+                    saw_starred_at = True
+                    dates.append(dt.datetime.fromisoformat(starred_at.replace("Z", "+00:00")).date())
+            url = parse_next_link(link)
+        if saw_starred_at or not saw_rows:
+            return sorted(dates)
+    raise RuntimeError(f"no starred_at field returned for {owner}/{repo}")
 
 
 def fetch_star_dates(owner: str):
@@ -103,7 +115,11 @@ def fetch_star_dates(owner: str):
     dates = []
     repos_with_star_dates = 0
     for repo in repos:
-        repo_dates = fetch_repo_star_dates(owner, repo)
+        try:
+            repo_dates = fetch_repo_star_dates(owner, repo)
+        except Exception as exc:
+            print(f"Warning: failed to fetch stars for {owner}/{repo}: {exc}", file=sys.stderr)
+            continue
         if repo_dates:
             repos_with_star_dates += 1
         dates.extend(repo_dates)
