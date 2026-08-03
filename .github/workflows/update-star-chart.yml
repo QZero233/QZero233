@@ -2,11 +2,17 @@ name: Update Star Chart
 
 on:
   schedule:
-    - cron: "0 0 * * *"
+    # 16:37 UTC = ~00:37 CST, off the :00 mark to avoid API rate-limit pile-ups.
+    - cron: "37 16 * * *"
   workflow_dispatch:
 
 permissions:
   contents: write
+
+# Avoid two runs (scheduled + manual) racing to commit the same file.
+concurrency:
+  group: star-chart
+  cancel-in-progress: false
 
 jobs:
   update-chart:
@@ -15,18 +21,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # The script reads STAR_CHART_TOKEN first (a dedicated Personal Access
+      # Token with the `public_repo` scope), giving it an independent 5000/hr
+      # quota so it does not compete with other workflows for GITHUB_TOKEN.
+      # Create it at https://github.com/settings/tokens and store it as a repo
+      # secret named STAR_CHART_TOKEN. It falls back to GITHUB_TOKEN otherwise.
+      # On rate-limit / fetch failure the script preserves the previous SVG and
+      # exits 0, so the commit step below will correctly report "No changes".
       - name: Generate star chart
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          STAR_CHART_TOKEN: ${{ secrets.STAR_CHART_TOKEN }}
           REPO_OWNER: ${{ github.repository_owner }}
           REPO_NAME: ${{ github.event.repository.name }}
         run: |
-          python .github/scripts/generate_star_chart.py
+          python3 .github/scripts/generate_star_chart.py
 
       - name: Commit and push if changed
         run: |
           if git diff --quiet && [ -z "$(git ls-files --others --exclude-standard assets/star-history.svg)" ]; then
-            echo "No changes"
+            echo "No changes (chart unchanged or fetch was skipped to preserve last good chart)"
             exit 0
           fi
           git config user.name "github-actions[bot]"
