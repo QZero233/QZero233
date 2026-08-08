@@ -6,6 +6,10 @@
 
 Graduate Student in CS · AI Agent Developer · 9 Years Java/Kotlin Experience
 
+<a href="mailto:o_occdd@126.com">
+  <img src="https://img.shields.io/badge/Email-o__occdd@126.com-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Email" />
+</a>
+
 ---
 
 ### 🚀 Currently Focused On
@@ -70,14 +74,6 @@ Graduate Student in CS · AI Agent Developer · 9 Years Java/Kotlin Experience
     <td>AI & AGI Enthusiast</td>
   </tr>
 </table>
-
----
-
-### 📫 Reach Me
-
-<a href="mailto:o_occdd@126.com">
-  <img src="https://img.shields.io/badge/Email-o__occdd@126.com-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Email" />
-</a>
 
 ---
 
